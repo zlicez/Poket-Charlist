@@ -49,22 +49,13 @@ vite.config.ts       # конфигурация Vite
 - Node.js 20+
 - PostgreSQL
 
-### 2. Подготовка базы (самый простой вариант)
-Если у вас нет PostgreSQL локально, используйте Docker:
+### 2. Подготовка базы
+Создайте базу (например `poket_charlist`) и задайте переменную:
 ```bash
-docker compose up -d
+export DATABASE_URL="postgres://user:password@localhost:5432/poket_charlist"
 ```
 
-Если PostgreSQL уже установлен вручную, создайте базу `poket_charlist`.
-
-### 3. Подготовка переменных окружения
-Скопируйте пример и при необходимости отредактируйте:
-```bash
-cp .env.example .env
-```
-Скрипты `npm run dev` и `npm run db:push` автоматически подхватывают переменные из `.env`.
-
-### 4. Включаем локальную авторизацию
+### 3. Включаем локальную авторизацию
 ```bash
 export LOCAL_AUTH=true
 export LOCAL_USER_ID=local-user
@@ -73,10 +64,9 @@ export LOCAL_USER_ID=local-user
 > Локальный режим **обходит Replit OIDC** и автоматически подставляет пользователя.  
 > Это нужно, чтобы все API работали без логина через Google/Replit.
 
-### 5. Устанавливаем зависимости, применяем миграции и стартуем
+### 4. Устанавливаем зависимости и стартуем
 ```bash
 npm install
-npm run db:push
 npm run dev
 ```
 
@@ -145,5 +135,3 @@ npm run db:push # применение миграций Drizzle
 4. `shared/schema.ts` содержит все D&D‑данные и расчёты.  
 
 ---
-
-Если нужен гайд по добавлению новых правил D&D, структуры персонажа или UI — пишите, разберём по шагам.
