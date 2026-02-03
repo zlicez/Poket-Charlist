@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: poket-charlist-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: poket_charlist
+    ports:
+      - "5432:5432"
+    volumes:
+      - poket-charlist-data:/var/lib/postgresql/data
+
+volumes:
+  poket-charlist-data:
