@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { authStorage } from "./storage";
-import { isAuthenticated } from "./replitAuth";
+import { isAuthenticated, isLocalAuthEnabled } from "./replitAuth";
 
 // Register auth-specific routes
 export function registerAuthRoutes(app: Express): void {
@@ -8,6 +8,17 @@ export function registerAuthRoutes(app: Express): void {
   app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      if (isLocalAuthEnabled) {
+        res.json({
+          id: userId,
+          email: process.env.LOCAL_USER_EMAIL ?? "local@example.com",
+          firstName: process.env.LOCAL_USER_FIRST_NAME ?? "Local",
+          lastName: process.env.LOCAL_USER_LAST_NAME ?? "User",
+          profileImageUrl: process.env.LOCAL_USER_AVATAR_URL ?? null,
+        });
+        return;
+      }
+
       const user = await authStorage.getUser(userId);
       res.json(user);
     } catch (error) {

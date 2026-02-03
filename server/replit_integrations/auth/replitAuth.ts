@@ -8,6 +8,8 @@ import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { authStorage } from "./storage";
 
+export const isLocalAuthEnabled = process.env.LOCAL_AUTH === "true";
+
 const getOidcConfig = memoize(
   async () => {
     return await client.discovery(
@@ -61,6 +63,10 @@ async function upsertUser(claims: any) {
 }
 
 export async function setupAuth(app: Express) {
+  if (isLocalAuthEnabled) {
+    return;
+  }
+
   app.set("trust proxy", 1);
   app.use(getSession());
   app.use(passport.initialize());
@@ -131,6 +137,15 @@ export async function setupAuth(app: Express) {
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
+  if (isLocalAuthEnabled) {
+    req.user = {
+      claims: {
+        sub: process.env.LOCAL_USER_ID ?? "local-user",
+      },
+    };
+    return next();
+  }
+
   const user = req.user as any;
 
   if (!req.isAuthenticated() || !user.expires_at) {
